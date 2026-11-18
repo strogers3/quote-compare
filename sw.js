@@ -1,6 +1,6 @@
 // Offline cache. Bump VERSION whenever index.html changes so phones pick up the update.
-const VERSION = 'qc-v1';
-const FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
+const VERSION = 'qc-v2';
+const FILES = ['./', './index.html', './review.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)));

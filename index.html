@@ -247,6 +247,8 @@ async function backup(){
   setBar('Backup','#/');
   app.innerHTML=`<section><h2>Export</h2><p class="hint">Everything lives only on this iPhone. Export a backup now and then and save it to Files / iCloud Drive.</p>
     <button id="prep">Prepare backup</button> <button id="save" class="ghost" hidden>Save backup file</button><p id="exm" class="hint"></p></section>
+  <section><h2>Review &amp; report</h2><p class="hint">On a computer or iPad, open the review page, load this backup file, then set weights, record your decision and print a PDF report for your group.</p>
+    <a class="btnlike" href="review.html">Open review page</a></section>
   <section><h2>Restore</h2><p class="hint">Merges a backup file into this device (items with the same ID are overwritten).</p>
     <label class="btnlike">Choose backup file<input id="im" type="file" accept="application/json,.json" class="vh"></label><p id="msg" class="hint"></p></section>
   <section><h2>Storage</h2><p class="hint" id="st">…</p></section>`;

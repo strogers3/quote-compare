@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quote Review</title>
+<link rel="icon" href="icon-180.png">
+<style>
+:root{--bg:#f5f5f4;--card:#fff;--ink:#1c1917;--mute:#78716c;--line:#e7e5e4;--acc:#0f766e;--onacc:#fff;--accbg:#ccfbf1;--warn:#b45309}
+@media (prefers-color-scheme:dark){:root{--bg:#0c0a09;--card:#1c1917;--ink:#f5f5f4;--mute:#a8a29e;--line:#292524;--acc:#2dd4bf;--onacc:#042f2e;--accbg:#134e4a;--warn:#fbbf24}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,system-ui,"Segoe UI",sans-serif}
+.top{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem 1rem;background:var(--card);border-bottom:1px solid var(--line)}
+.top h1{font-size:1.05rem;margin:0}
+.top a{color:var(--acc);text-decoration:none}
+.layout{display:grid;grid-template-columns:330px 1fr;gap:1.25rem;max-width:1280px;margin:0 auto;padding:1.25rem 1rem}
+.layout>*{min-width:0}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+@media screen and (max-width:700px){.paper{padding:1.25rem 1rem;overflow-x:auto}.kpis{grid-template-columns:repeat(2,1fr)}}
+.panel section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:1rem}
+.panel h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--mute);margin:0 0 .7rem}
+label{display:block;font-size:.85rem;color:var(--mute);margin-bottom:.7rem}
+input[type=text],textarea,select{width:100%;font:inherit;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);margin-top:.2rem}
+textarea{resize:vertical}
+.w{display:grid;grid-template-columns:1fr 6.5rem 1.5rem;align-items:center;gap:.4rem;font-size:.88rem;margin-bottom:.35rem}
+.w input{width:100%;accent-color:var(--acc)}
+.w b{text-align:right;font-variant-numeric:tabular-nums}
+button,.btn{display:inline-block;font:inherit;font-weight:600;padding:.6rem 1rem;border-radius:9px;border:0;background:var(--acc);color:var(--onacc);cursor:pointer;text-decoration:none}
+button.ghost,.btn.ghost{background:none;color:var(--acc);border:1px solid var(--line)}
+button.wide{width:100%;margin-bottom:.5rem}
+.hint{font-size:.82rem;color:var(--mute);margin:.2rem 0 .6rem}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:3rem 1.5rem;text-align:center;background:var(--card);max-width:640px;margin:3rem auto}
+.drop.over{border-color:var(--acc);background:var(--accbg)}
+.drop h2{margin:0 0 .5rem}
+.vh{position:absolute;opacity:0;width:1px;height:1px}
+.err{color:#b91c1c}
+
+/* ---------- report (always light: it is a printed document) ---------- */
+.paper{background:#fff;color:#1c1917;border-radius:6px;box-shadow:0 2px 16px #0002;padding:.7in .75in;font:10.5pt/1.5 -apple-system,"Segoe UI",system-ui,sans-serif}
+.paper h1{font-size:22pt;line-height:1.15;margin:0 0 .2rem;color:#134e4a}
+.paper h2{font-size:13pt;color:#134e4a;border-bottom:2px solid #0f766e;padding-bottom:.2rem;margin:1.6rem 0 .7rem}
+.paper h3{font-size:11.5pt;margin:1rem 0 .4rem}
+.paper .meta{color:#57534e;margin:0 0 1.2rem}
+.paper .sub{color:#57534e;font-size:9pt}
+.rec{border:1px solid #99f6e4;background:#f0fdfa;border-radius:8px;padding:.9rem 1.1rem;margin:1rem 0}
+.rec .lbl{font-size:8.5pt;text-transform:uppercase;letter-spacing:.08em;color:#0f766e;font-weight:700}
+.rec .name{font-size:16pt;font-weight:700;margin:.15rem 0}
+.rec p{margin:.5rem 0 0;white-space:pre-wrap}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1rem 0}
+.kpi{border:1px solid #e7e5e4;border-radius:8px;padding:.55rem .7rem}
+.kpi div{font-size:8.5pt;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+.kpi b{font-size:13pt;font-variant-numeric:tabular-nums}
+.paper table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:.4rem 0}
+.paper th,.paper td{border-bottom:1px solid #e7e5e4;padding:.4rem .45rem;text-align:left;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
+.paper thead th{background:#f5f5f4;font-weight:600;color:#44403c;border-bottom:1px solid #d6d3d1}
+.paper tbody th{color:#57534e;font-weight:600;width:8.5rem}
+.paper td.num,.paper th.num{text-align:right;font-variant-numeric:tabular-nums}
+.paper tr.chosen td{background:#f0fdfa;font-weight:600}
+.bar{height:.55rem;background:#e7e5e4;border-radius:3px;min-width:4rem}
+.bar i{display:block;height:100%;background:#0f766e;border-radius:3px}
+.flag{color:#b45309;font-size:8.5pt}
+.cmp{table-layout:fixed}
+.dl{display:grid;grid-template-columns:8.5rem 1fr;gap:.15rem .8rem;margin:.3rem 0}
+.dl dt{color:#78716c}.dl dd{margin:0;white-space:pre-wrap}
+.note{border-left:3px solid #99f6e4;padding:.1rem 0 .1rem .7rem;margin:.5rem 0}
+.note time{display:block;font-size:8.5pt;color:#78716c}
+.note p{margin:0;white-space:pre-wrap}
+.pics{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem}
+.pics img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;break-inside:avoid}
+.method{color:#57534e;font-size:9pt}
+.foot{margin-top:2rem;padding-top:.5rem;border-top:1px solid #e7e5e4;color:#a8a29e;font-size:8.5pt}
+.page{margin-top:2.5rem}
+.pre{white-space:pre-wrap}
+
+@media print{
+  @page{size:letter;margin:15mm 14mm}
+  html,body{background:#fff}
+  .noprint{display:none!important}
+  .layout{display:block;padding:0;max-width:none}
+  .paper{box-shadow:none;border-radius:0;padding:0}
+  .page{break-before:page;margin-top:0}
+  .rec,.kpis,tr,.note,.dl{break-inside:avoid}
+  h2,h3{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="top noprint"><h1>Quote Review &amp; Report</h1><a href="./">‹ Back to app</a></div>
+
+<div id="loader" class="drop noprint">
+  <h2>Load your quotes</h2>
+  <p class="hint">On the iPhone: Quotes app → <b>Backup</b> → Prepare → Save backup file (AirDrop, iCloud Drive or email it to this computer).<br>Then drop the file here. It is read in this browser only and never uploaded anywhere.</p>
+  <label class="btn">Choose backup file<input id="file" type="file" accept="application/json,.json" class="vh"></label>
+  <p id="lerr" class="err"></p>
+</div>
+
+<div id="main" class="layout" hidden>
+  <aside class="panel noprint">
+    <section><h2>Project</h2>
+      <select id="proj"></select>
+      <p class="hint" id="src"></p>
+      <label class="btn ghost">Load a different file<input id="file2" type="file" accept="application/json,.json" class="vh"></label></section>
+    <section><h2>Report details</h2>
+      <label>Report title<input type="text" id="title"></label>
+      <label>Prepared by<input type="text" id="by"></label>
+      <label>Prepared for<input type="text" id="for" placeholder="e.g. Renovation committee"></label></section>
+    <section><h2>Scoring weights</h2>
+      <p class="hint">How much each factor counts (0 = ignore). Ratings come from your on-site visits; “Lowest price” is calculated from the quotes.</p>
+      <div id="weights"></div></section>
+    <section><h2>Decision</h2>
+      <label>Final choice<select id="final"></select></label>
+      <label>Reason for recommendation<textarea id="reason" rows="5" placeholder="Why this business: quality seen on site, warranty, timing…"></textarea></label></section>
+    <button class="wide" onclick="window.print()">Print / Save as PDF</button>
+    <p class="hint">In the print dialog pick “Save as PDF”. Your weights and decision are remembered in this browser.</p>
+  </aside>
+  <article class="paper" id="report"></article>
+</div>
+
+<script>
+'use strict';
+const CRIT=[['quality','Quality'],['value','Price / value'],['service','Service'],['warranty','Warranty'],['trust','Trust']];
+const FACTORS=[...CRIT,['cheapest','Lowest price']];
+const LABEL=Object.fromEntries(FACTORS);
+const DEF_W={quality:3,value:2,service:2,warranty:1,trust:2,cheapest:3};
+let data=null,proj=null,vendors=[],st={};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>n==null||n===''?'—':'$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct=x=>(x>0?'+':'')+Math.round(x*100)+'%';
+const fmtDate=s=>{if(!s)return '—';const d=/^\d{4}-\d{2}-\d{2}$/.test(s)?new Date(s+'T12:00'):new Date(s);return d.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});};
+const store={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+// ---------- loading ----------
+async function loadFile(f){
+  $('lerr').textContent='';
+  try{const d=JSON.parse(await f.text());
+    if(d.app!=='quotecompare'||!Array.isArray(d.projects))throw new Error('This is not a Quote Compare backup file.');
+    if(!d.projects.length)throw new Error('The backup has no projects in it.');
+    data=d;
+    $('src').textContent=`${f.name} · exported ${new Date(d.exported).toLocaleString()}`;
+    const ps=[...d.projects].sort((a,b)=>b.created-a.created);
+    $('proj').innerHTML=ps.map(p=>`<option value="${p.id}">${esc(p.name)} (${d.vendors.filter(v=>v.projectId===p.id).length} quotes)</option>`).join('');
+    $('loader').hidden=true;$('main').hidden=false;selectProject(ps[0].id);
+  }catch(e){$('lerr').textContent='Could not load: '+e.message;$('loader').hidden=false;$('main').hidden=true;}
+}
+$('file').onchange=e=>e.target.files[0]&&loadFile(e.target.files[0]);
+$('file2').onchange=e=>{if(e.target.files[0])loadFile(e.target.files[0]);e.target.value='';};
+const dz=$('loader');
+['dragenter','dragover'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('over');}));
+['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('over');}));
+dz.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)loadFile(f);});
+$('proj').onchange=e=>selectProject(e.target.value);
+
+function selectProject(id){
+  proj=data.projects.find(p=>p.id===id);
+  vendors=data.vendors.filter(v=>v.projectId===id).sort((a,b)=>a.created-b.created);
+  vendors.forEach(v=>{v.ratings=v.ratings||{};v.notes=v.notes||[];});
+  const saved=store.get('qc-review-'+id)||{};
+  st={title:'Vendor Selection Report',by:'',for:'',reason:'',finalId:proj.finalVendorId||'',...saved,weights:{...DEF_W,...(saved.weights||{})}};
+  if(st.finalId&&!vendors.some(v=>v.id===st.finalId))st.finalId='';
+  $('title').value=st.title;$('by').value=st.by;$('for').value=st.for;$('reason').value=st.reason;
+  $('final').innerHTML='<option value="">— Not decided —</option>'+vendors.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('');
+  $('final').value=st.finalId;
+  $('weights').innerHTML=FACTORS.map(([k,l])=>`<div class="w"><span>${l}</span><input type="range" min="0" max="5" step="1" data-k="${k}" value="${st.weights[k]}"><b id="wv-${k}">${st.weights[k]}</b></div>`).join('');
+  render();
+}
+const save=()=>store.set('qc-review-'+proj.id,st);
+['title','by','for','reason'].forEach(k=>$(k).addEventListener('input',e=>{st[k]=e.target.value;save();render();}));
+$('final').onchange=e=>{st.finalId=e.target.value;save();render();};
+$('weights').addEventListener('input',e=>{const k=e.target.dataset.k;if(!k)return;st.weights[k]=+e.target.value;$('wv-'+k).textContent=e.target.value;save();render();});
+
+// ---------- analysis ----------
+function analyse(){
+  const prices=vendors.map(v=>v.price).filter(p=>p>0);
+  const min=prices.length?Math.min(...prices):null,max=prices.length?Math.max(...prices):null;
+  const avg=prices.length?prices.reduce((a,b)=>a+b,0)/prices.length:null;
+  const rows=vendors.map(v=>{
+    const vals={};CRIT.forEach(([k])=>{if(v.ratings[k]>0)vals[k]=v.ratings[k]/5;});
+    if(v.price>0&&min)vals.cheapest=min/v.price;
+    let num=0,den=0,tot=0;const missing=[];
+    FACTORS.forEach(([k])=>{const w=st.weights[k]||0;if(!w)return;tot+=w;if(vals[k]==null){missing.push(LABEL[k]);return;}num+=w*vals[k];den+=w;});
+    const partial=tot>0&&den/tot<0.75;
+    const flags=[];
+    if(partial&&den)flags.push(`Partial score: only ${Math.round(den/tot*100)}% of the weighting has data`);
+    if(!(v.price>0))flags.push('No price recorded');
+    if(missing.length)flags.push('Not scored on: '+missing.join(', '));
+    if(!v.notes.length)flags.push('No site notes');
+    return {v,partial,score:den?Math.round(num/den*100):null,flags,vsMin:min&&v.price>0?(v.price-min)/min:null,vsAvg:avg&&v.price>0?(v.price-avg)/avg:null};
+  }).sort((a,b)=>(a.partial-b.partial)||((b.score??-1)-(a.score??-1)));
+  rows.forEach((r,i)=>r.rank=r.score==null?null:i+1);
+  rows.forEach(r=>r.scoreText=r.score==null?'—':r.score+(r.partial?' (partial)':''));
+  return {rows,min,max,avg};
+}
+
+// ---------- report ----------
+function render(){
+  const {rows,min,max,avg}=analyse();
+  const fin=rows.find(r=>r.v.id===st.finalId);
+  const top=rows[0];
+  const wsum=FACTORS.reduce((a,[k])=>a+(st.weights[k]||0),0);
+  const wtext=wsum?FACTORS.filter(([k])=>st.weights[k]).map(([k,l])=>`${l} ${Math.round(st.weights[k]/wsum*100)}%`).join(' · '):'No weights set';
+  const photos=id=>(data.photos||[]).filter(p=>p.vendorId===id).sort((a,b)=>a.ts-b.ts);
+  const stars=n=>n>0?`${n}/5`:'—';
+  const cell=(v,k)=>esc(v[k])||'—';
+
+  const recBox=fin?`<div class="rec"><div class="lbl">Recommendation</div><div class="name">${esc(fin.v.name)}</div>
+      <div>${money(fin.v.price)} · weighted score ${fin.scoreText}${fin.score!=null?' / 100':''} · ranked ${fin.rank??'—'} of ${rows.length}${fin.vsMin>0?` · ${pct(fin.vsMin)} vs lowest quote`:fin.vsMin===0&&rows.length>1?' · lowest quote':''}</div>
+      ${st.reason?`<p>${esc(st.reason)}</p>`:''}</div>`
+    :`<div class="rec"><div class="lbl">Recommendation</div><div class="name">No final choice yet</div>
+      <div>${top&&top.score!=null?`Top ranked: <b>${esc(top.v.name)}</b> (${top.scoreText} / 100).`:'Not enough ratings to rank the quotes.'}</div></div>`;
+
+  $('report').innerHTML=`
+  <h1>${esc(st.title)||'Vendor Selection Report'}</h1>
+  <p class="meta"><b>${esc(proj.name)}</b><br>${st.for?'Prepared for '+esc(st.for)+' · ':''}${st.by?'Prepared by '+esc(st.by)+' · ':''}${fmtDate(new Date().toISOString())}</p>
+  ${recBox}
+  <div class="kpis">
+    <div class="kpi"><div>Quotes reviewed</div><b>${rows.length}</b></div>
+    <div class="kpi"><div>Lowest quote</div><b>${money(min)}</b></div>
+    <div class="kpi"><div>Highest quote</div><b>${money(max)}</b></div>
+    <div class="kpi"><div>Average</div><b>${money(avg)}</b></div>
+  </div>
+  ${proj.notes?`<h2>Project scope</h2><p class="pre">${esc(proj.notes)}</p>`:''}
+
+  <h2>Ranking</h2>
+  <table><thead><tr><th class="num">#</th><th>Business</th><th class="num">Price</th><th class="num">vs lowest</th><th class="num">Score</th><th></th><th>Data gaps</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr class="${r.v.id===st.finalId?'chosen':''}"><td class="num">${r.rank??'—'}</td><td>${r.v.id===st.finalId?'✓ ':''}${esc(r.v.name)}</td>
+    <td class="num">${money(r.v.price)}</td><td class="num">${r.vsMin==null?'—':r.vsMin===0?'lowest':pct(r.vsMin)}</td>
+    <td class="num">${r.scoreText}</td><td><div class="bar"><i style="width:${r.score||0}%"></i></div></td>
+    <td class="flag">${r.flags.map(esc).join('<br>')}</td></tr>`).join('')}
+  </tbody></table>
+  <p class="method"><b>Scoring weights:</b> ${wtext}. Each rating (1–5 stars, recorded during site visits) is scaled to 0–1; “Lowest price” = lowest quote ÷ this quote. The score is the weighted average × 100. Factors a business was not rated on are left out of its score and listed under data gaps; a business with data for less than 75% of the weighting is marked “partial” and ranked after the fully scored ones.</p>
+
+  <h2>Side-by-side comparison</h2>
+  <table class="cmp"><thead><tr><th></th>${rows.map(r=>`<th>${r.v.id===st.finalId?'✓ ':''}${esc(r.v.name)}</th>`).join('')}</tr></thead><tbody>
+  <tr><th>Price</th>${rows.map(r=>`<td>${money(r.v.price)}</td>`).join('')}</tr>
+  <tr><th>Score</th>${rows.map(r=>`<td>${r.scoreText}</td>`).join('')}</tr>
+  ${CRIT.map(([k,l])=>`<tr><th>${l}</th>${rows.map(r=>`<td>${stars(r.v.ratings[k])}</td>`).join('')}</tr>`).join('')}
+  <tr><th>Lead time</th>${rows.map(r=>`<td>${cell(r.v,'leadTime')}</td>`).join('')}</tr>
+  <tr><th>Warranty terms</th>${rows.map(r=>`<td>${cell(r.v,'warrantyText')}</td>`).join('')}</tr>
+  <tr><th>Included</th>${rows.map(r=>`<td>${cell(r.v,'included')}</td>`).join('')}</tr>
+  <tr><th>Pros</th>${rows.map(r=>`<td>${cell(r.v,'pros')}</td>`).join('')}</tr>
+  <tr><th>Cons</th>${rows.map(r=>`<td>${cell(r.v,'cons')}</td>`).join('')}</tr>
+  </tbody></table>
+
+  ${rows.map(r=>{const v=r.v,ph=photos(v.id);return `<section class="page">
+    <h2>${r.v.id===st.finalId?'✓ ':''}${esc(v.name)}</h2>
+    <dl class="dl">
+      <dt>Contact</dt><dd>${esc(v.contact)||'—'}</dd>
+      <dt>Phone</dt><dd>${esc(v.phone)||'—'}</dd>
+      <dt>Email</dt><dd>${esc(v.email)||'—'}</dd>
+      <dt>Address</dt><dd>${esc(v.address)||'—'}</dd>
+      <dt>Site visit</dt><dd>${fmtDate(v.visitDate)}</dd>
+      <dt>Quoted price</dt><dd><b>${money(v.price)}</b>${r.vsMin>0?` <span class="sub">(${pct(r.vsMin)} vs lowest, ${pct(r.vsAvg)} vs average)</span>`:''}</dd>
+      <dt>Lead time</dt><dd>${cell(v,'leadTime')}</dd>
+      <dt>Warranty terms</dt><dd>${cell(v,'warrantyText')}</dd>
+      <dt>What's included</dt><dd>${cell(v,'included')}</dd>
+      <dt>Ratings</dt><dd>${CRIT.map(([k,l])=>`${l} ${stars(v.ratings[k])}`).join(' · ')}</dd>
+      <dt>Weighted score</dt><dd>${r.scoreText}${r.score!=null?' / 100':''}${r.rank?` (rank ${r.rank} of ${rows.length})`:''}</dd>
+      <dt>Pros</dt><dd>${cell(v,'pros')}</dd>
+      <dt>Cons</dt><dd>${cell(v,'cons')}</dd>
+    </dl>
+    <h3>Site notes</h3>
+    ${v.notes.length?[...v.notes].sort((a,b)=>a.ts-b.ts).map(n=>`<div class="note"><time>${new Date(n.ts).toLocaleString()}</time><p>${esc(n.text)}</p></div>`).join(''):'<p class="sub">No notes recorded.</p>'}
+    ${ph.length?`<h3>Photos (${ph.length})</h3><div class="pics">${ph.map(p=>`<img src="${esc(p.blob)}" alt="">`).join('')}</div>`:''}
+  </section>`;}).join('')}
+  <div class="foot">Generated from site-visit data collected with Quote Compare · ${new Date().toLocaleString()}</div>`;
+}
+</script>
+</body>
+</html>
